@@ -1,4 +1,4 @@
-
+import numpy as np
 import pandas as pd
 import os
 import seaborn as sns
@@ -104,4 +104,23 @@ plt.title('RSSI by time')
 plt.xlabel('Time')
 plt.ylabel('RSSI')
 plt.savefig('./results/RSSI_time.png')
+
+    # New Dataframe dividing the timestamp in 1 second slots with two columns : slot_start and slot_id
+slots = pd.DataFrame({'slot_start': pd.date_range(start=Tmin, end=Tmax, freq='1s')})
+slots['slot_id'] = slots.index
+
+    # Merge the dataframes asof (as of) to keep the RSSI value of the last timestamp before the slot_start
+tags = tags.sort_values('Timestamp', ascending=True)
+slots = slots.sort_values('slot_start', ascending=True)
+
+tags = pd.merge_asof(tags, slots, left_on='Timestamp', right_on='slot_start', direction='nearest')
+
+tags.drop(['slot_start'], axis=1, inplace=True)
+
+
+    # pivot_table
+pivot_table = tags.pivot_table(index='EPC', columns=['Antenna_coverage', 'slot_id'], values='RSSI', aggfunc=[np.mean, np.std, np.min, np.max, np.median, np.size])
+
+    # Save the pivot table in a csv file
+pivot_table.to_csv('./results/pivot_table.csv')
 
