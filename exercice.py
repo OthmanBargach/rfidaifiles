@@ -7,9 +7,9 @@ import seaborn as sns
 os.system("cls") # For Windows
 
     # files
-moving_file = 'moving.csv'
-stationary_file = 'stationary.csv'
-tags_file = 'ko=2__tiltAngle=40.csv'
+moving_file = './data/moving.csv'
+stationary_file = './data/stationary.csv'
+tags_file = './data/ko=2__tiltAngle=40.csv'
 
     # Reads moving data
 moving_data = pd.read_csv(moving_file, names=['EPC'])
@@ -53,7 +53,7 @@ ax = sns.swarmplot(x="actual", y="RSSI_max", data=RSSImax, color=".25")
 ax.set_title('RSSI max by orientation')
 ax.set_xlabel('Orientation')
 ax.set_ylabel('RSSI max')
-ax.figure.savefig('RSSI_max.png')
+ax.figure.savefig('./results/RSSI_max.png')
 
     # Separate the data into two groups (moving and stationary) by prediction on RSSI_max = -68
 RSSImax['predicted'] = RSSImax['RSSI_max'].apply(lambda x: 'moving' if x > -68 else 'stationary')
@@ -67,7 +67,7 @@ disp = sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues')
 disp.set_title('Confusion matrix')
 disp.set_xlabel('Predicted')
 disp.set_ylabel('Actual')
-disp.figure.savefig('confusion_matrix.png')
+disp.figure.savefig('./results/confusion_matrix.png')
 
     # the accuracy
 from sklearn.metrics import accuracy_score
@@ -85,7 +85,7 @@ import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(10, 10))
 ax.text(0.05, 0.95, Report, fontsize=14, va='top')
 ax.axis('off')
-fig.savefig('classification_report.png')
+fig.savefig('./results/classification_report.png')
 
 
 
