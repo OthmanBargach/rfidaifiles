@@ -2,6 +2,8 @@
 import pandas as pd
 import os
 import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report
 
     # Clear the screen
 os.system("cls") # For Windows
@@ -72,29 +74,34 @@ disp.figure.savefig('./results/confusion_matrix.png')
     # the accuracy
 from sklearn.metrics import accuracy_score
 accuracy = accuracy_score(RSSImax['actual'], RSSImax['predicted'])
-print('Accuracy: ', accuracy)
-print(' ')
 
-
-    # Classification report
-from sklearn.metrics import classification_report
+    # Classification report and saves it in a file
 Report = classification_report(RSSImax['actual'], RSSImax['predicted'])
+with open('./results/classification_report.txt', 'w') as f:
+    f.write(Report)
 
 
     # Plot the classification report
-import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(10, 10))
 ax.text(0.05, 0.95, Report, fontsize=14, va='top')
 ax.axis('off')
 fig.savefig('./results/classification_report.png')
 
-    # Pivot table
-pivot = pd.pivot_table(tags, values='RSSI', index=['EPC'], columns=['Antenna_coverage'], aggfunc='max')
-print(pivot.head(10))
-pivot = pd.merge(pivot, reflist, on='EPC', how='left')
-print(pivot.head(10))
-
-
-    # Slice time to 1 second
-tags['Timestamp'] = tags['Timestamp'].dt.round('1s')
+    # Plot the data by time and RSSI
+plt.figure(figsize=(14,8))
+Tmin=tags['Timestamp'].min()
+Tmax=tags['Timestamp'].max()
+dict_Antenna_coverage = {'in':'blue', 'out':'red'}
+dict_actual = {'moving':'o', 'stationary':'+'}
+for key, df in tags.groupby(['actual', 'Antenna_coverage']):
+    actual=key[0]
+    Antenna_coverage=key[1]
+    m=dict_actual[actual]
+    c=dict_Antenna_coverage[Antenna_coverage]
+    sns.scatterplot(data=df, x='Timestamp', y='RSSI', marker=m, color=c)
+plt.xlim(Tmin, Tmax)
+plt.title('RSSI by time')
+plt.xlabel('Time')
+plt.ylabel('RSSI')
+plt.savefig('./results/RSSI_time.png')
 
