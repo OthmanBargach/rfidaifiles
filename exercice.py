@@ -56,7 +56,7 @@ ax.set_ylabel('RSSI max')
 ax.figure.savefig('RSSI_max.png')
 
     # Separate the data into two groups (moving and stationary) by prediction on RSSI_max = -68
-RSSImax['predicted'] = RSSImax['RSSI_max'].apply(lambda x: 'moving' if x < -68 else 'stationary')
+RSSImax['predicted'] = RSSImax['RSSI_max'].apply(lambda x: 'moving' if x > -68 else 'stationary')
 
     # Confusion matrix 
 from sklearn.metrics import confusion_matrix
