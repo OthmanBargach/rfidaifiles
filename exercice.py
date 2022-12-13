@@ -80,6 +80,7 @@ print(' ')
 from sklearn.metrics import classification_report
 Report = classification_report(RSSImax['actual'], RSSImax['predicted'])
 
+
     # Plot the classification report
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(10, 10))
@@ -87,10 +88,13 @@ ax.text(0.05, 0.95, Report, fontsize=14, va='top')
 ax.axis('off')
 fig.savefig('./results/classification_report.png')
 
+    # Pivot table
+pivot = pd.pivot_table(tags, values='RSSI', index=['EPC'], columns=['Antenna_coverage'], aggfunc='max')
+print(pivot.head(10))
+pivot = pd.merge(pivot, reflist, on='EPC', how='left')
+print(pivot.head(10))
 
 
-
-
-
-
+    # Slice time to 1 second
+tags['Timestamp'] = tags['Timestamp'].dt.round('1s')
 
