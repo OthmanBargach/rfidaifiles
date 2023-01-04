@@ -1,0 +1,27 @@
+def visu(tags, EPC):
+   
+    Tmin=tags['Timestamp'].min()
+    Tmax=tags['Timestamp'].max()
+    RSSImin=tags['RSSI'].min()
+    RSSImax=tags['RSSI'].max()
+   
+    if EPC is not None:
+        tags = tags [tags['EPC']==EPC]
+       
+    plt.figure(figsize=(14,6))
+
+    dict_Antenna_coverage = {'in':'blue', 'out':'red'}
+    dict_actual = {'moving':'o', 'stationary':'+'}
+    for key, df in tags.groupby(['actual', 'Antenna_coverage']):
+        actual=key[0]
+        Antenna_coverage=key[1]
+        m=dict_actual[actual]
+        c=dict_Antenna_coverage[Antenna_coverage]
+        sns.scatterplot(data=df, x='Timestamp', y='RSSI', marker=m, color=c)
+
+    plt.vlines(Slots['slotStart'], ymin=RSSImin, ymax=RSSImax, linestyle='dashed')
+    for i, row in Slots.iterrows():
+        startSlot=row['slotStart']
+        slot_id=row['slot_id']
+        plt.annotate(slot_id, (startSlot, RSSImin))
+    plt.xlim(Tmin, Tmax)
