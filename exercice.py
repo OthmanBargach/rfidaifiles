@@ -101,12 +101,14 @@ RSSImin = tags['RSSI'].min()
 RSSImax = tags['RSSI'].max()
 dict_Antenna_coverage = {'in':'blue', 'out':'red'}
 dict_actual = {'moving':'o', 'stationary':'+'}
+
 for key, df in tags.groupby(['actual', 'Antenna_coverage']):
     actual=key[0]
     Antenna_coverage=key[1]
     m=dict_actual[actual]
     c=dict_Antenna_coverage[Antenna_coverage]
     sns.scatterplot(data=df, x='Timestamp', y='RSSI', marker=m, color=c)
+    
 plt.xlim(Tmin, Tmax)
 plt.ylim(RSSImin, RSSImax)
 plt.title('RSSI by time')
